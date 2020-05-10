@@ -1,0 +1,17 @@
+{
+  "name": "project1",
+  "version": "1.0.0",
+  "description": "Web Programming with Python and JavaScript",
+  "main": "index.js",
+  "scripts": {
+    "sass": "node-sass -w scss/main.scss static/main.css"
+  },
+  "author": "Ryan Williams",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^4.4.1"
+  },
+  "devDependencies": {
+    "node-sass": "^4.13.1"
+  }
+}

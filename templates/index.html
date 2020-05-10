@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+    {% if session.user_id %}
+        <!-- book search form -->
+        <h1 class="my-5 pt-5">Welcome to Bookkase!</h1>
+
+        <form action="{{ url_for('book_search') }}" method="get">
+            <h4 class="my-4 pt-3 pt-md-5">Search for a book</h4>
+            <div class="form-group">
+                <input class="form-control w-75" autofocus name="q" placeholder="Enter a title, author, or ISBN" type="text">
+            </div>
+            <button class="btn btn-primary mt-4" type="submit">Search</button>
+        </form>
+    {% else %}
+        <!-- login form -->
+        <h1 class="my-5 pb-3">Log in</h1>
+
+        {% if error_message %}
+            <p class="text-info">{{ error_message }}</p>
+        {% endif %}
+        <form action="/login" method="post">
+            <div class="form-group">
+                <input class="form-control" autofocus name="username" placeholder="Username" type="text">
+            </div>
+            <div class="form-group">
+                <input class="form-control" name="password" placeholder="Password" type="password">
+            </div>
+            <button class="btn btn-primary mt-3 mb-5" type="submit">Log in</button>
+        </form>
+
+        <div class="row justify-content-center">
+            <p class="col-8 col-md-4 mt-3 py-3 border-top">or</p>
+        </div>
+        <a class="btn btn-primary" href="/register">Register</a>
+    {% endif %}
+    
+{% endblock %}

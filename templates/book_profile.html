@@ -1,0 +1,164 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ book.title }} by {{ book.author }}
+{% endblock %}
+
+{% block main %}
+    <!-- book info -->
+    <div class="container my-5">
+        <div class="row justify-content-between">
+
+            <div class="col-12 col-md-4 p-4 text-left border rounded bg-tertiary">
+                <h3>{{ book.title }}</h3>
+                <h6 class="mb-4">by {{ book.author }}</h6>
+                <p>Pusblished: {{ book.year }}</p>
+                <p>ISBN: {{ book.isbn }}</p>
+            </div>
+            
+            <div class="col-12 col-md-4 p-3 mt-3 mt-md-0 align-self-start text-center border rounded bg-tertiary">
+                <h5 class="mb-4">goodreads&#174; average rating:</h5>
+                <h3>{{ grData.average_rating }} / 5</h3>
+                <p>({{ grData.work_ratings_count }} reviews)</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pt-5">
+
+        <!-- reviews section -->
+        <div class="row text-left">
+            <h3 class="col-12 mb-3 pt-4 text-left">Bookkase Reviews</h3>
+            {% if ratingData %}
+                <h5 class="col-12">Average rating: <span class="text-tertiary">&#9733;</span> {{ ratingData.average_score }}</h5>
+            {% else %}
+                <p class="col-12 text-center mt-4">Be the first to submit a review! </p>
+            {% endif %}
+        </div>
+
+        {% if not existingReview %}
+            <!-- form for new review -->
+
+            <!-- button to show review form -->
+            <button class="btn btn-tertiary my-4" id="newReviewBtn">Submit a review</button>
+
+            <!-- review form - hidden until button click -->
+            <div id="showNewReviewForm" style="display: none;">
+                <h4 class="pt-4 border-top">Submit a review</h4>
+
+                <form id="newReviewForm" action="/book_review/{{ book.isbn }}" method="post">
+
+                    <!-- rating (1-5) -->
+                    <div class="btn-group btn-group-toggle mt-4 mb-3" id="ratingSelect">
+                        <label class="btn btn-tertiary">
+                            <input type="radio" value="1" name="rating"><span class="text-secondary">&#9733;</span>
+                        </label>
+                        <label class="btn btn-tertiary">
+                            <input type="radio" value="2" name="rating"><span class="text-secondary">&#9733;</span>
+                        </label>
+                        <label class="btn btn-tertiary">
+                            <input type="radio" value="3" name="rating"><span class="text-secondary">&#9733;</span>
+                        </label>
+                        <label class="btn btn-tertiary">
+                            <input type="radio" value="4" name="rating"><span class="text-secondary">&#9733;</span>
+                        </label>
+                        <label class="btn btn-tertiary">
+                            <input type="radio" value="5" name="rating"><span class="text-secondary">&#9733;</span>
+                        </label>
+                    </div>
+                    <h3 class="mb-3"><span class="text-tertiary">&#9733;</span> <span id="showRating">-</span></h3>
+
+                    <!-- review comments -->
+                    <div class="form-group">
+                        <textarea class="form-control w-100" name="reviewText" rows="10"></textarea>
+                    </div>
+
+                    <button class="btn btn-primary mb-4" type="submit">Submit</button>
+                </form>
+            </div>
+        {% else %}
+            <!-- existing review -->
+            <h5 class="pt-4 border-top">My Review</h5>
+            <div class="row border rounded-left rounded-top bg-white text-secondary mt-4" id="currentReviewInfo">
+                <div class="col-3 bg-primary pt-3">
+                    <h4><span class="text-beige">&#9733;</span> {{ existingReview.reviewrating }}</h4>
+                    <p>{{ existingReview.username }}</p>
+                </div>
+
+                <div class="col text-left review">
+                    {% if existingReview.reviewtext %}
+                        <p>{{ existingReview.reviewtext }}</p>
+                    {% else %}
+                        <p>No comment</p>
+                    {% endif %}
+                    <p class="reviewMoreBtn" style="display: none;">
+                        <button class="btn btn-tertiary btn-sm">more</button>
+                    </p>
+                </div>
+            </div>
+            <div class="row justify-content-end mb-4">
+                    <button class="btn btn-primary btn-sm text-secondary rounded-bottom" id="editReviewBtn" type="button">Edit</button>
+            </div>
+
+            <!-- review edit form -->
+            <form id="editReviewForm" action="/book_review/{{ book.isbn }}" method="post" style="display: none;">
+
+                <!-- rating (1-5) -->
+                <div class="btn-group btn-group-toggle mb-3" id="ratingSelect">
+                    <label class="btn btn-tertiary">
+                        <input type="radio" value="1" name="rating"><span class="text-secondary">&#9733;</span>
+                    </label>
+                    <label class="btn btn-tertiary">
+                        <input type="radio" value="2" name="rating"><span class="text-secondary">&#9733;</span>
+                    </label>
+                    <label class="btn btn-tertiary">
+                        <input type="radio" value="3" name="rating"><span class="text-secondary">&#9733;</span>
+                    </label>
+                    <label class="btn btn-tertiary">
+                        <input type="radio" value="4" name="rating"><span class="text-secondary">&#9733;</span>
+                    </label>
+                    <label class="btn btn-tertiary">
+                        <input type="radio" value="5" name="rating"><span class="text-secondary">&#9733;</span>
+                    </label>
+                </div>
+                <!-- show/select original rating value by default -->
+                <h3 class="mb-3"><span class="text-tertiary">&#9733;</span> <span id="showRating">{{ existingReview.reviewrating }}</span></h3>
+
+                <!-- review comments -->
+                <div class="form-group">
+                    <textarea class="form-control w-100" name="reviewText" rows="10">{{ existingReview.reviewtext }}</textarea>
+                </div>
+
+                <button class="btn btn-primary mb-4" id="submitEditBtn" disabled type="submit">Update</button>
+            </form>
+        {% endif %}
+
+        <!-- all user reviews -->
+        {% if ratingData %}
+            <h4 class="pt-4 border-top">All Reviews</h4>
+            {% for review in reviews %}
+                <div class="row border rounded mt-5 bg-white text-secondary">
+                    <div class="col-3 bg-primary pt-3">
+                        <h4><span class="text-beige">&#9733;</span> {{ review.reviewrating }}</h4>
+                        <p>{{ review.username }}</p>
+                    </div>
+
+                    <div class="col text-left review">
+                        {% if review.reviewtext %}
+                            <p>{{ review.reviewtext }}</p>
+                        {% else %}
+                            <p>No comment</p>
+                        {% endif %}
+                        <p class="reviewMoreBtn" style="display: none;">
+                            <button class="btn btn-tertiary btn-sm" type="button">more</button>
+                        </p>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <p class="mt-5">* goodreads&#174; rating data courtesy of <a href="http://goodreads.com">goodreads.com</a></p>
+
+    </div>
+    
+{% endblock %}

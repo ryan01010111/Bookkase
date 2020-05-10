@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Book search results
+{% endblock %}
+
+{% block main %}
+
+    <!-- if results return empty -->
+    {% if not results %}
+        <h3 class="h-mrg-lg mb-5">Sorry! We didn't find any matches for "{{ searchQuery }}"</h3>
+    {% else %}
+        <h3 class="my-5 pt-3">Search for "{{ searchQuery }}":</h3>
+    {% endif %}
+
+    <!-- button to populate new search input field -->
+    <button class="btn btn-primary mb-4 showContentBtn" type="button" data-showgroup="show1">New search</button>
+
+    <!-- new search form -->
+    <form class="show1" action="{{ url_for('book_search') }}" style="display: none;">
+        <div class="form-group">
+            <input class="form-control w-75" id="show1-focus" name="q" placeholder="Enter a title, author, or ISBN" type="text">
+        </div>
+        <button class="btn btn-primary my-4" type="submit">Search</button>
+    </form>
+
+    <!-- display search results -->
+    {% if results %}
+        <!-- search results -->
+        <table class="table">
+            <tr>
+                <th class="border-0">Title</th>
+                <th class="border-0">Author</th>
+            </tr>
+            {% for row in results %}
+                <tr>
+                    <td>
+                        {{ row.title }}
+                        <br>
+                        ISBN: {{ row.isbn }}</td>
+                    <td>{{ row.author }}</td>
+                    <td><a class="btn btn-tertiary" href="/book/{{ row.isbn }}">></a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    
+{% endblock %}

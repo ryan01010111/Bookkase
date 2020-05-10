@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    API
+{% endblock %}
+
+{% block main %}
+    <h1 class="my-5">API</h1>
+
+    <div class="container text-left">
+
+        <h4>The Bookkase API provides developers with access to Bookkase's database of book information and ratings.
+            To get started using the Bookkase API, please read below.</h4>
+
+        <p class="my-5">The Bookkase API currently offers general information and rating data for individual works.
+            This data can be retrived in JSON format via the url path <code>/api/books/[ISBN]</code> where [ISBN] is
+            the ISBN of the work whose data you would like to access.</p>
+            <h6>The API will return the following keys:</h6>
+            <div class="mrg-sm mt-3">
+                <p>"author" = The work's author</p>
+                <p>"average_score" = The work's average rating (maximum of 5.0) on Bookkase</p>
+                <p>"isbn" = The work's ISBN</p>
+                <p>"review_count" = The number of ratings the work has received on Bookkase</p>
+                <p>"title" = The work's title</p>
+                <p>"year_published" = The year in which the work was published</p>
+            </div>
+        
+    </div>
+{% endblock %}
